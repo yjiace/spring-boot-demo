@@ -1,0 +1,20 @@
+spring:
+  datasource:
+    driver-class-name: net.sf.log4jdbc.DriverSpy
+    url: jdbc:log4jdbc:postgresql://aws-0-us-west-1.pooler.supabase.com:5432/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8
+    username: postgres.qthmwncbnfyjwmyzoluw
+    password: cCkHhQQnSRMDhbyc
+    type: com.zaxxer.hikari.HikariDataSource
+    hikari:
+      minimum-idle: 2
+      maximum-pool-size: 10
+      connection-test-query: SELECT 1
+      max-lifetime: 18000
+      connection-timeout: 30000
+  jackson:
+    serialization:
+      indent-output: true
+    time-zone: GMT+8
+  jpa:
+    show-sql: false
+    open-in-view: false
