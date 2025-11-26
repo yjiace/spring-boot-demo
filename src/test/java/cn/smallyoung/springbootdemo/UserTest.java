@@ -22,7 +22,7 @@ import java.util.Map;
  */
 
 @SpringBootTest
-@ActiveProfiles("yjc")
+@ActiveProfiles("dev")
 public class UserTest {
 
     @Resource
@@ -45,7 +45,7 @@ public class UserTest {
      */
     @Test
     public void findById() {
-        User user = userService.findOne("6925755dfef93b7155e91ff7");
+        User user = userService.findOne("6926a1958f79b1d48e11a6f2");
         System.out.println(user);
     }
 

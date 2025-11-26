@@ -48,8 +48,8 @@ Content-Type: application/json
 
 > {%
     if (response.body && response.body.code === 200) {
-        var token = response.body.data && response.body.data.token 
-            ? response.body.data.token 
+        var token = response.body.data && response.body.data.token
+            ? response.body.data.token
             : response.body.token;
         if (token) {
             client.global.set("token", token);

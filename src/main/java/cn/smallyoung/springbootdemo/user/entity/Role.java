@@ -4,10 +4,7 @@ import cn.smallyoung.springbootdemo.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serial;
@@ -47,6 +44,7 @@ public class Role extends BaseEntity<String> implements Serializable {
     private String name;
 
     @JsonIgnore
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
     @JoinTable(name = "t_role_permission", joinColumns = {@JoinColumn(name = "role_id")}, inverseJoinColumns = {@JoinColumn(name = "permission_id")})
