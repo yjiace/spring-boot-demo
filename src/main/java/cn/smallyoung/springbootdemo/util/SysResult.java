@@ -43,7 +43,7 @@ public class SysResult<T> implements Serializable {
     }
 
     public static <T> SysResult<T> success(T data) {
-        return result(HttpStatus.BANDWIDTH_LIMIT_EXCEEDED, data);
+        return result(HttpStatus.OK, data);
     }
 
     public static <T> SysResult<T> failure(String msg) {
