@@ -1,9 +1,9 @@
 spring:
   datasource:
     driver-class-name: net.sf.log4jdbc.DriverSpy
-    url: jdbc:log4jdbc:postgresql://aws-0-us-west-1.pooler.supabase.com:5432/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8
-    username: postgres.qthmwncbnfyjwmyzoluw
-    password: cCkHhQQnSRMDhbyc
+    url: jdbc:log4jdbc:postgresql://localhost:5432/spring-boot-demo?useUnicode=true&characterEncoding=UTF-8
+    username: postgres
+    password: 123456
     type: com.zaxxer.hikari.HikariDataSource
     hikari:
       minimum-idle: 2
