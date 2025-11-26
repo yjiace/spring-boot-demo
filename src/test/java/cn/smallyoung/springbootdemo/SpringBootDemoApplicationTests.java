@@ -1,13 +1,16 @@
 package cn.smallyoung.springbootdemo;
 
+import cn.hutool.crypto.asymmetric.RSA;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest
+//@SpringBootTest
 class SpringBootDemoApplicationTests {
 
     @Test
-    void contextLoads() {
+    public void contextLoads() {
+        RSA rsa = new RSA();
+        System.out.println("PrivateKey: " + rsa.getPrivateKeyBase64());
+        System.out.println("PublicKey: " + rsa.getPublicKeyBase64());
     }
 
 }

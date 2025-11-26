@@ -1,6 +1,7 @@
 package cn.smallyoung.springbootdemo.user.controller;
 
 
+import cn.hutool.core.lang.Dict;
 import cn.smallyoung.springbootdemo.interfaces.ResponseSysResult;
 import cn.smallyoung.springbootdemo.user.entity.User;
 import cn.smallyoung.springbootdemo.user.service.UserService;
@@ -68,4 +69,45 @@ public class UserController {
         users.forEach(t -> t.setDeleted("Y"));
         userService.save(users);
     }
+
+    /**
+     * 刷新token
+     *
+     * @return 刷新后的用户信息
+     */
+    @GetMapping("refresh")
+    public Dict refresh() {
+        return userService.refresh();
+    }
+
+    /**
+     * 登出
+     */
+    @DeleteMapping("logout")
+    public void logout() {
+        userService.logout();
+    }
+
+    /**
+     * 查询用户角色列表和所有角色列表
+     *
+     * @param userId 用户id
+     * @return 用户角色列表和所有角色列表
+     */
+    @GetMapping("getRoleByUserId/{userId}")
+    public Dict getRoleByUserId(@PathVariable String userId) {
+        return userService.getRoles(userId);
+    }
+
+    /**
+     * 为用户赋予角色
+     *
+     * @param userId  用户id
+     * @param roleIds 角色id列表
+     */
+    @PostMapping("giveRole/{userId}")
+    public void giveRole(@PathVariable String userId, @RequestBody List<String> roleIds) {
+        userService.giveRole(userId, roleIds);
+    }
+
 }

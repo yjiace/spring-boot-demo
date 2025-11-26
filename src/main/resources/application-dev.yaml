@@ -18,3 +18,37 @@ spring:
   jpa:
     show-sql: false
     open-in-view: false
+
+  data:
+    redis:
+      host: localhost
+      password: 123456
+      port: 6379
+      database: 0
+      jedis:
+        pool:
+          max-idle: 3
+          max-wait: 30
+          max-active: 10
+
+jwt:
+  # 是否开启鉴权，当为false时，表示通过全部请求
+  enable: false
+  # redis中保存token的键名称
+  private_key: MIICdwIBADANBgkqhkiG9w0BAQEFAASCAmEwggJdAgEAAoGBAK2L59z9FtJIyhbW0Wq6dEwkA8UuA6968+sKgN2SSA32eaJ6fFk3kn8IK9G/pev592sPDv9CTGF7NR35XfWZpimw9MokvnnTeAt1jQRWafaz73Em1a2NGbDWL7XoaGun/cAAvh8kbq1I6JhfB1nzihj1SSGnHgrA64XpEl17s9YbAgMBAAECgYAE5VMKiwSGnZc/V1T44kTFFGMES9KnVr8S/744MICzsIARZLTUDyECCmjhUum/o0dVeKhH7HVVhfF02OyFvI10PPEf6gATRQm6EWp3zs8R6EBGQ5l4myDq72h9mmmwnH6aseUd0fRd7FI3sTo0LX5mTyuDvvE4e04LcMHhbJnfaQJBAOwFZMROjHsJRgoRmrdNFo/VDkrP4wrhGurC7hdrF/Et4MtIFUURzcmqPMYk5BFJzTbldGe+KuoYNhKW4/6cp98CQQC8PK4xZdHGXP62eC8s5QMUDbOnRztzzF8KqNK+UaMrJQcoF/vG3bOvG8OwFf1VadNP3eq2w0KRm3T2Na/z5ElFAkEAk764mo5VMDvY5Tqp8C7IfdcwMDK8fLX3RJgrtOssPKSsgHQqJGeFu8TecGbtgckCNmgim0KW2J25U5+zL1JfXwJAT8O64M3PnanseW/mNbT5n/bKaRkDNWel4oN1ghZf+TlglfnLxBJQQOSYALbgud/1HkPgYP/O5pqkbmyDmerjrQJBAJaPhyM3zf1y4+neW69HMVGQN7ftm07zf4vPYEvGtW1N1oqWo5A6n24nTrdIgcuXWJ9qNgpwSEvurBZ3UV/0rPA=
+  public-key: MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCti+fc/RbSSMoW1tFqunRMJAPFLgOvevPrCoDdkkgN9nmienxZN5J/CCvRv6Xr+fdrDw7/QkxhezUd+V31maYpsPTKJL5503gLdY0EVmn2s+9xJtWtjRmw1i+16Ghrp/3AAL4fJG6tSOiYXwdZ84oY9Ukhpx4KwOuF6RJde7PWGwIDAQAB
+  # token过期时间（分钟）
+  expiration: 120
+  # 是否单点登录
+  sso: true
+  # 只要登录即可访问
+  auth-url:
+    - /user/logout
+    - /user/updatePwd
+    - /user/refresh
+  # 匿名访问
+  anon-url:
+    - /open/**
+    - /captcha
+    - /login/**
+    - /favicon.ico

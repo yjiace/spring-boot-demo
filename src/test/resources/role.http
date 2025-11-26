@@ -1,0 +1,98 @@
+@baseUrl = http://localhost:8080
+
+###############################################
+# RoleController 相关接口 (需要认证)
+###############################################
+
+### 角色分页查询
+GET {{baseUrl}}/role/page?page=0&size=10
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 角色分页查询 - 按名称搜索
+GET {{baseUrl}}/role/page?page=0&size=10&search_name=管理员
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 角色分页查询 - 排序
+GET {{baseUrl}}/role/page?page=0&size=20&sort=name,asc
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 根据ID查询角色详情
+GET {{baseUrl}}/role/findById/1
+Authorization: Bearer {{token}}
+Accept: application/json
+
+### 保存新角色
+POST {{baseUrl}}/role/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "系统管理员"
+}
+
+### 更新角色信息
+POST {{baseUrl}}/role/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "id": "1",
+  "name": "超级管理员"
+}
+
+### 保存普通用户角色
+POST {{baseUrl}}/role/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "普通用户"
+}
+
+### 保存访客角色
+POST {{baseUrl}}/role/save
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "访客"
+}
+
+### 删除角色
+DELETE {{baseUrl}}/role/delete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+["role-id-1", "role-id-2"]
+
+### 删除单个角色
+DELETE {{baseUrl}}/role/delete
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+["role-id-1"]
+
+### 为角色设置权限
+POST {{baseUrl}}/role/givePermission/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+["permission-id-1", "permission-id-2", "permission-id-3"]
+
+### 为角色设置全部权限
+POST {{baseUrl}}/role/givePermission/admin-role-id
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+["perm-1", "perm-2", "perm-3", "perm-4", "perm-5"]
+
+### 清空角色权限
+POST {{baseUrl}}/role/givePermission/guest-role-id
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+[]
+

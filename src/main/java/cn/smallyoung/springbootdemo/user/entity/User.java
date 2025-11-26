@@ -1,13 +1,9 @@
 package cn.smallyoung.springbootdemo.user.entity;
 
-
 import cn.smallyoung.springbootdemo.base.BaseEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -16,12 +12,15 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- *
  * @author smallyoung
  */
-
 @Data
 @Entity
 @NoArgsConstructor
@@ -32,9 +31,8 @@ import java.io.Serializable;
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class User extends BaseEntity<String> implements Serializable {
 
-
     @Serial
-    private static final long serialVersionUID = 4697369047001746474L;
+    private static final long serialVersionUID = 4632193998951213972L;
 
     /**
      * 主键
@@ -67,5 +65,21 @@ public class User extends BaseEntity<String> implements Serializable {
      */
     @Column(name = "status")
     private String status;
+
+    @JsonIgnore
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+    @JoinTable(name = "t_user_role", joinColumns = {@JoinColumn(name = "user_id")}, inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    private List<Role> roles = new ArrayList<>();
+
+    @JsonIgnore
+    public List<Permission> getAllPermission() {
+        if (roles == null) {
+            return new ArrayList<>();
+        }
+        return this.roles.stream().filter(r -> r.getPermissions() != null)
+                .flatMap(r -> r.getPermissions().stream()).filter(Objects::nonNull).distinct()
+                .sorted(Comparator.comparing(Permission::getOrderNum)).collect(Collectors.toList());
+    }
 
 }

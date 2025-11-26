@@ -1,6 +1,7 @@
 package cn.smallyoung.springbootdemo;
 
 
+import cn.hutool.core.lang.Dict;
 import cn.smallyoung.springbootdemo.user.entity.User;
 import cn.smallyoung.springbootdemo.user.service.UserService;
 import jakarta.annotation.Resource;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDateTime;
@@ -17,15 +19,16 @@ import java.util.Map;
 /**
  *
  * @author smallyoung
- * @date 2025/11/25
  */
 
 @SpringBootTest
-@ActiveProfiles("dev")
+@ActiveProfiles("yjc")
 public class UserTest {
 
     @Resource
     private UserService userService;
+    @Resource
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     /**
      * 分页查询
@@ -53,7 +56,7 @@ public class UserTest {
     public void save() {
         User user =  new User();
         user.setUsername("test");
-        user.setPassword("password");
+        user.setPassword(bCryptPasswordEncoder.encode("123456"));
         user.setStatus("Y");
         user.setCreatedBy("-1");
         user.setCreatedTime(LocalDateTime.now());
@@ -72,5 +75,11 @@ public class UserTest {
         List<User> users = userService.findAllById(List.of("6925755dfef93b7155e91ff7"));
         users.forEach(t -> t.setDeleted("Y"));
         userService.save(users);
+    }
+
+    @Test
+    public void testLogin(){
+        Dict dict = userService.loginByUsername("test", "123456", false);
+        System.out.println(dict);
     }
 }
