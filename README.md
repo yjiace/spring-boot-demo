@@ -249,6 +249,101 @@ spring:
     allow-bean-definition-overriding: true
 ```
 
+### 5. 鉴权业务规则
+
+项目集成了基于 Spring Security 和 JWT 的自定义鉴权机制，实现了无状态的 Token 认证。
+
+#### 整体架构
+
+- **核心过滤器**: `JwtTokenFilter`，接管了 Spring Security 的认证流程。
+- **配置类**: `SecurityConfig` (Spring Security 配置) 和 `JwtConfig` (JWT 属性配置)。
+- **工具类**: `UserUtil`，用于获取当前登录用户信息。
+
+#### 配置说明
+
+在 `application.yaml` 中配置 `jwt` 前缀的属性：
+
+| 属性 | 说明 | 默认值 |
+|------|------|--------|
+| `enable` | 是否开启鉴权 | `true` |
+| `sso` | 是否开启单点登录 | `false` |
+| `tokenHead` | Token 请求头名称 | `Authorization` |
+| `expiration` | Token 过期时间(分钟) | `120` |
+| `refreshTime` | 允许刷新 Token 的最大时长(秒) | `30天` |
+| `anonUrl` | 匿名访问路径列表 | `/captcha`, `/login` |
+| `authUrl` | 需登录访问路径列表 | `/user/logout`, `/user/updatePassword`, `/user/refresh` |
+| `noAccess` | 禁止外网访问接口列表 | `[]` |
+
+#### 认证流程
+
+1. **Token 提取**: 从请求头（默认 `Authorization`）中获取 Token，去除 `Bearer ` 前缀。
+2. **签名验证**: 使用 RSA 公钥验证 Token 签名是否合法。
+3. **过期检查**:
+   - 检查 Token 是否过期。
+   - 如果过期但未超过 `refreshTime`，且访问的是刷新接口 `/user/refresh`，则允许通过。
+   - 否则返回 401 或 402（需刷新）。
+4. **Redis 校验**:
+   - **单点登录 (SSO)**: 开启时，Redis Key 为 `login_token_key:{userId}`。新的登录会覆盖旧的 Token，旧 Token 失效。
+   - **多端登录**: 关闭 SSO 时，Redis Key 包含 Token 签名，允许多个 Token 同时有效。
+   - 校验 Redis 中是否存在对应的 Token 信息，不存在则视为无效。
+
+#### 鉴权逻辑
+
+1. **匿名访问**: 匹配 `anonUrl` 的路径直接放行。
+2. **登录访问**: 匹配 `authUrl` 的路径，只要 Token 有效即可访问。
+3. **动态权限**: 如果 Redis 中保存的用户权限（`authorities`）匹配当前请求路径，则允许访问。
+4. **禁止访问**: 匹配 `noAccess` 的路径直接返回 403。
+
+#### 常用工具 `UserUtil`
+
+- `getCurrentAuditor()`: 获取当前登录用户 ID。
+- `getCurrentUserToken()`: 获取当前 Token。
+- `setUserName(obj)`: 自动为对象或列表中的 `createdBy`/`updatedBy` 字段填充对应的用户名（`createdName`/`updatedName`）。
+
+### 6. JPA 审计与数据填充
+
+#### JPA 审计
+
+项目实现了 `AuditorAware` 接口 (`SpringSecurityAuditorAware`)，配合 JPA 的 `@EntityListeners(AuditingEntityListener.class)`，可自动填充实体类的审计字段。
+
+- **自动填充字段**:
+  - `@CreatedBy`: 创建人 ID
+  - `@CreatedDate`: 创建时间
+  - `@LastModifiedBy`: 最后修改人 ID
+  - `@LastModifiedDate`: 最后修改时间
+
+- **获取用户 ID**: 通过 `UserUtil.getCurrentAuditor()` 获取当前登录用户 ID。
+
+#### UserUtil 数据填充
+
+在前后端分离架构中，数据库通常只存储用户 ID（如 `createdBy`），但前端展示需要真实姓名（如 `createdName`）。`UserUtil.setUserName` 方法提供了高性能的自动填充功能。
+
+**核心功能**:
+- **批量查询**: 自动收集列表中所有的用户 ID，一次性查询数据库，避免 N+1 问题。
+- **支持多种类型**: 支持 `Page<T>`, `List<T>`, 和单个对象 `T`。
+- **支持嵌套属性**: 支持对象内部嵌套对象或集合的 ID 转换。
+
+**使用示例**:
+
+```java
+// 1. 分页数据填充
+Page<User> page = userRepository.findAll(pageable);
+UserUtil.setUserName(page);
+
+// 2. 列表数据填充
+List<Order> list = orderRepository.findAll();
+UserUtil.setUserName(list);
+
+// 3. 自定义属性映射 (默认映射 createdBy->createdName, updatedBy->updatedName)
+List<UserUtil.UserProperty> properties = List.of(
+    UserUtil.UserProperty.builder()
+        .idProperty("managerId")       // ID 字段名
+        .realNameProperty("managerName") // 目标姓名字段名
+        .build()
+);
+UserUtil.setUserName(list, properties);
+```
+
 ## 🚀 快速开始
 
 ### 1. 克隆项目
