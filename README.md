@@ -364,6 +364,187 @@ User user = JSON.parseObject(json, User.class);
 - **Fastjson2**: 用于高性能的 JSON 序列化和反序列化
 - **MapStruct**: 用于 DTO 和 Entity 之间的对象转换，编译期生成映射代码，性能优异
 
+## 🔍 通用查询规范
+
+项目实现了基于 JPA Specification 的通用动态查询功能,支持通过 URL 参数或 Map 参数构建复杂的查询条件,无需编写重复的查询代码。
+
+### 参数格式
+
+查询参数格式为:`search_${join}_${operator}_${fields}=value`
+
+> **注意**: 变量中禁止使用 `-` 连接符,必须使用 `_` 下划线分隔
+
+**参数组成部分:**
+
+1. **`${join}`** - 连接关键词
+   - 必须以 `AND` 或 `OR` 开头(不区分大小写)
+   - 相同的连接关键词表示同一个括号内的查询条件
+   - 例如:`AND1`、`OR1`、`AND2` 等
+
+2. **`${operator}`** - 操作符
+   - 指定查询的比较方式
+   - 支持的操作符见下方列表
+
+3. **`${fields}`** - 字段名
+   - 实体对象中的属性名
+   - 支持关联查询,使用 `.` 进行分隔
+   - 例如:`user.department.name`
+
+### 支持的操作符
+
+| 操作符 | 说明 | 示例 |
+|--------|------|------|
+| `EQ` | 相等 | `search_AND1_EQ_name=张三` |
+| `NEQ` | 不相等 | `search_AND1_NEQ_status=0` |
+| `NULL` | 为空 | `search_AND1_NULL_deletedAt=` |
+| `NOTNULL` | 不为空 | `search_AND1_NOTNULL_email=` |
+| `LIKE` | 前后模糊匹配 | `search_AND1_LIKE_name=张` |
+| `LEFTLIKE` | 前模糊匹配(以...结尾) | `search_AND1_LEFTLIKE_name=三` |
+| `RIGHTLIKE` | 后模糊匹配(以...开头) | `search_AND1_RIGHTLIKE_name=张` |
+| `NOTLIKE` | 不包含 | `search_AND1_NOTLIKE_name=李` |
+| `GT` | 大于 | `search_AND1_GT_age=18` |
+| `GE` | 大于等于 | `search_AND1_GE_age=18` |
+| `LT` | 小于 | `search_AND1_LT_age=60` |
+| `LE` | 小于等于 | `search_AND1_LE_age=60` |
+| `BETWEEN` | 区间查询 | `search_AND1_BETWEEN_age=18~60` |
+| `IN` | 包含(多值) | `search_AND1_IN_status=1:2:3` |
+| `NOTIN` | 不包含(多值) | `search_AND1_NOTIN_status=0:9` |
+| `JSONCONTAIN` | JSON字段包含 | `search_AND1_JSONCONTAIN_tags=spring` |
+
+**特殊操作符说明:**
+
+- **BETWEEN**: 两个值之间用 `~` 分隔,例如:`18~60`
+- **IN/NOTIN**: 多个值用 `:` 分隔,例如:`1:2:3`
+- **NULL/NOTNULL**: 判空/非空查询 (需传递任意非空值，例如 `1`，否则会被过滤)
+
+### 空值处理
+
+框架会自动过滤**空字符串**（`""`）的查询条件。
+
+这意味着前端可以统一传递所有查询参数，无需在前端判断值是否为空。如果参数值为空字符串，该条件将被自动忽略，不会生成 SQL 语句。
+
+> **注意**: 对于 `NULL` 和 `NOTNULL` 操作符，也必须传递一个非空值（如 `1`），否则该条件也会被过滤。
+
+**示例：**
+
+```
+GET /api/users?search_AND_EQ_name=&search_AND_GT_age=18&search_AND_NULL_email=1
+```
+
+- `name` 为空，条件被过滤
+- `age` 有值，生成 `age > 18`
+- `email` 有值（`1`），生成 `email IS NULL`
+
+生成的 SQL：
+
+```sql
+WHERE age > 18 AND email IS NULL
+```
+
+### 使用示例
+
+#### 示例 1: 简单查询
+
+查询名称为"张三"的用户:
+
+```
+GET /api/users?search_AND1_EQ_name=张三
+```
+
+生成的 SQL 条件:
+```sql
+WHERE name = '张三'
+```
+
+#### 示例 2: 多条件 AND 查询
+
+查询年龄大于18且状态为1的用户:
+
+```
+GET /api/users?search_AND1_GT_age=18&search_AND1_EQ_status=1
+```
+
+生成的 SQL 条件:
+```sql
+WHERE age > 18 AND status = 1
+```
+
+#### 示例 3: 多条件 OR 查询
+
+查询名称包含"张"或"李"的用户:
+
+```
+GET /api/users?search_OR1_LIKE_name=张&search_OR1_LIKE_name=李
+```
+
+生成的 SQL 条件:
+```sql
+WHERE name LIKE '%张%' OR name LIKE '%李%'
+```
+
+#### 示例 4: 复杂组合查询
+
+查询(名称为"张三"或"李四")且(年龄在18-60之间)的用户:
+
+```
+GET /api/users?search_OR1_EQ_name=张三&search_OR1_EQ_name=李四&search_AND2_BETWEEN_age=18~60
+```
+
+生成的 SQL 条件:
+```sql
+WHERE (name = '张三' OR name = '李四') AND (age BETWEEN 18 AND 60)
+```
+
+#### 示例 5: 关联查询
+
+支持多级关联查询，例如查询角色名包含"管理员"的用户：
+
+```
+GET /api/users?search_AND_EQ_roles.name=管理员
+```
+
+> **重要提示**: 使用关联查询时，**必须**在 Entity 实体类中正确配置 JPA 关联关系（如 `@OneToMany`, `@ManyToOne`, `@ManyToMany`），否则无法生成 JOIN 语句。
+
+生成的 SQL 条件（自动处理 JOIN）：
+```sql
+SELECT DISTINCT u.* FROM user u 
+LEFT JOIN user_role ur ON u.id = ur.user_id 
+LEFT JOIN role r ON ur.role_id = r.id 
+WHERE r.name = '管理员'
+```
+
+#### 示例 6: IN 查询
+
+查询状态为1、2或3的用户:
+
+```
+GET /api/users?search_AND1_IN_status=1:2:3
+```
+
+生成的 SQL 条件:
+```sql
+WHERE status IN (1, 2, 3)
+```
+
+### 注意事项
+
+1. **参数命名规范**
+   - 必须使用下划线 `_` 分隔,不能使用 `-`
+   - 字段名区分大小写,需与实体类属性名完全一致
+
+2. **关联查询**
+   - 使用 `.` 分隔关联属性,如 `department.name`
+   - 确保实体类中已正确配置关联关系(`@ManyToOne`、`@OneToMany` 等)
+
+3. **特殊字符处理**
+   - URL 参数中的特殊字符需要进行 URL 编码
+   - 例如:空格编码为 `%20`,中文需要 UTF-8 编码
+
+4. **性能优化**
+   - 避免过度使用 LIKE 查询,建议使用全文索引
+   - 关联查询时注意 N+1 问题,可使用 `@EntityGraph` 优化
+   - 对于复杂查询,建议添加合适的数据库索引
+
 ---
 
-祝学习愉快！如有问题，欢迎交流。
+祝学习愉快!如有问题,欢迎交流。
