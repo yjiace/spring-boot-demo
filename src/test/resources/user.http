@@ -1,0 +1,45 @@
+@baseUrl = http://localhost:8080
+
+### 用户分页查询
+GET {{baseUrl}}/user/page?page=0&size=10
+Accept: application/json
+
+### 用户分页查询 - 带状态筛选
+GET {{baseUrl}}/user/page?page=0&size=10&search_AND_EQ_status=Y
+Accept: application/json
+
+### 根据ID查询用户详情
+GET {{baseUrl}}/user/findById/6927acb3fef9933cb2462c22
+Accept: application/json
+
+### 保存新用户
+POST {{baseUrl}}/user/save
+Content-Type: application/json
+
+{
+  "username": "test001",
+  "password": "123456",
+  "avatarUrl": null,
+  "status": "Y",
+  "created_by": "6926a1958f79b1d48e11a6f2",
+  "created_time": "2025-01-01 00:00:00",
+  "updated_by": "6926a1958f79b1d48e11a6f2",
+  "updated_time": "2025-01-01 00:00:00"
+}
+
+### 更新用户信息
+POST {{baseUrl}}/user/save
+Content-Type: application/json
+
+{
+  "id": "6926a1958f79b1d48e11a6f2",
+  "username": "admin",
+  "avatarUrl": null,
+  "status": "Y"
+}
+
+### 删除用户
+DELETE {{baseUrl}}/user/delete
+Content-Type: application/json
+
+["6927ad2bfef9933cb2462c23"]
