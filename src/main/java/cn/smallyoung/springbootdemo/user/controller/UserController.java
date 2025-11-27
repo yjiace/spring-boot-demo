@@ -1,16 +1,23 @@
 package cn.smallyoung.springbootdemo.user.controller;
 
 
+import cn.smallyoung.springbootdemo.exception.BizException;
 import cn.smallyoung.springbootdemo.interfaces.ResponseSysResult;
+import cn.smallyoung.springbootdemo.user.dto.UserRequest;
+import cn.smallyoung.springbootdemo.user.dto.UserResponse;
+import cn.smallyoung.springbootdemo.user.dto.mapper.UserMapper;
 import cn.smallyoung.springbootdemo.user.entity.User;
 import cn.smallyoung.springbootdemo.user.service.UserService;
+import cn.smallyoung.springbootdemo.util.UserUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.WebUtils;
 
@@ -34,9 +41,13 @@ public class UserController {
      * 分页查询
      */
     @GetMapping("/page")
-    public Page<User> page(@PageableDefault(sort = {"updatedTime"}, direction = Sort.Direction.DESC) Pageable pageable,
-                           HttpServletRequest request) {
-        return userService.findAll(WebUtils.getParametersStartingWith(request, "search_"), pageable);
+    public Page<UserResponse> page(@PageableDefault(sort = {"updatedTime"}, direction = Sort.Direction.DESC) Pageable pageable,
+                                   HttpServletRequest request) {
+        Page<User> page = userService.findAll(WebUtils.getParametersStartingWith(request, "search_"), pageable);
+        if (CollectionUtils.isEmpty(page.getContent())) {
+            return new PageImpl<>(List.of(), pageable, page.getTotalElements());
+        }
+        return UserUtil.setUserName(page.map(UserMapper.INSTANCE::toResponse));
     }
 
     /**
@@ -45,15 +56,27 @@ public class UserController {
      * @param id 角色id
      */
     @GetMapping("/findById/{id}")
-    public User findById(@PathVariable String id) {
-        return userService.findOne(id);
+    public UserResponse findById(@PathVariable String id) {
+        User user = userService.findOne(id);
+        if (user == null) {
+            throw new BizException("根据ID【{}】为查询到对应的用户信息", id);
+        }
+        return UserUtil.setUserName(UserMapper.INSTANCE.toResponse(user));
     }
 
     /**
      * 保存
      */
     @PostMapping("/save")
-    public void save(@RequestBody User user) {
+    public void save(@RequestBody UserRequest request) {
+        User user = new User();
+        if (request.getId() != null) {
+            user = userService.findOne(request.getId());
+            if (user == null) {
+                throw new BizException("根据ID【{}】为查询到对应的用户信息", request.getId());
+            }
+        }
+        UserMapper.INSTANCE.init(user, request);
         userService.save(user);
     }
 
