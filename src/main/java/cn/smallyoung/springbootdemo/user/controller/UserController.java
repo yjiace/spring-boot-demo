@@ -1,7 +1,6 @@
 package cn.smallyoung.springbootdemo.user.controller;
 
 
-import cn.smallyoung.springbootdemo.exception.BizException;
 import cn.hutool.core.lang.Dict;
 import cn.smallyoung.springbootdemo.exception.BizException;
 import cn.smallyoung.springbootdemo.interfaces.ResponseSysResult;
@@ -9,9 +8,6 @@ import cn.smallyoung.springbootdemo.user.dto.UserRequest;
 import cn.smallyoung.springbootdemo.user.dto.UserResponse;
 import cn.smallyoung.springbootdemo.user.dto.mapper.UserMapper;
 import cn.smallyoung.springbootdemo.user.entity.User;
-import cn.smallyoung.springbootdemo.user.dto.UserRequest;
-import cn.smallyoung.springbootdemo.user.dto.UserResponse;
-import cn.smallyoung.springbootdemo.user.dto.mapper.UserMapper;
 import cn.smallyoung.springbootdemo.user.service.UserService;
 import cn.smallyoung.springbootdemo.util.UserUtil;
 import jakarta.annotation.Resource;
