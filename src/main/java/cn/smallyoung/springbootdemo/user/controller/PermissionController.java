@@ -9,6 +9,7 @@ import cn.smallyoung.springbootdemo.user.pojo.PermissionRequest;
 import cn.smallyoung.springbootdemo.user.pojo.PermissionResponse;
 import cn.smallyoung.springbootdemo.user.pojo.mapper.PermissionMapper;
 import cn.smallyoung.springbootdemo.user.service.PermissionService;
+import cn.smallyoung.springbootdemo.util.UserUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -59,7 +60,7 @@ public class PermissionController {
         if (CollectionUtils.isEmpty(page.getContent())) {
             return new PageImpl<>(List.of(), pageable, page.getTotalElements());
         }
-        return page.map(PermissionMapper.INSTANCE::toResponse);
+        return UserUtil.setUserName(page.map(PermissionMapper.INSTANCE::toResponse));
     }
 
     /**
@@ -73,7 +74,7 @@ public class PermissionController {
         if (permission == null) {
             throw new BizException("根据ID【{}】为查询到对应的权限信息", id);
         }
-        return PermissionMapper.INSTANCE.toResponse(permission);
+        return UserUtil.setUserName(PermissionMapper.INSTANCE.toResponse(permission));
     }
 
     /**

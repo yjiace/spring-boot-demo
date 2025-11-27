@@ -18,7 +18,7 @@ Content-Type: application/json
 {
   "username": "admin",
   "password": "123456",
-  "code": "7772",
+  "code": "3792",
   "codeId": "{{captchaId}}",
   "remember": true
 }
@@ -62,17 +62,17 @@ Content-Type: application/json
 ###############################################
 
 ### 用户分页查询
-GET {{baseUrl}}/user/page?page=0&size=10&search_username=admin
+GET {{baseUrl}}/user/page?page=0&size=10
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ### 用户分页查询 - 带状态筛选
-GET {{baseUrl}}/user/page?page=0&size=10&search_status=Y
+GET {{baseUrl}}/user/page?page=0&size=10&search_AND_EQ_status=Y
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ### 根据ID查询用户详情
-GET {{baseUrl}}/user/findById/1
+GET {{baseUrl}}/user/findById/6926a1958f79b1d48e11a6f2
 Authorization: Bearer {{token}}
 Accept: application/json
 
@@ -82,9 +82,9 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "username": "testuser",
+  "username": "test",
   "password": "123456",
-  "avatarUrl": "https://example.com/avatar.jpg",
+  "avatarUrl": null,
   "status": "Y"
 }
 
@@ -94,10 +94,9 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "id": "1",
+  "id": "6926a1958f79b1d48e11a6f2",
   "username": "admin",
-  "password": "newpassword",
-  "avatarUrl": "https://example.com/new-avatar.jpg",
+  "avatarUrl": null,
   "status": "Y"
 }
 
@@ -106,7 +105,7 @@ DELETE {{baseUrl}}/user/delete
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
-["user-id-1", "user-id-2"]
+["6927ad2bfef9933cb2462c23"]
 
 ### 刷新Token
 GET {{baseUrl}}/user/refresh
@@ -130,14 +129,14 @@ DELETE {{baseUrl}}/user/logout
 Authorization: Bearer {{token}}
 
 ### 查询用户角色列表
-GET {{baseUrl}}/user/getRoleByUserId/1
+GET {{baseUrl}}/user/getRoleByUserId/6927acb3fef9933cb2462c22
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ### 为用户赋予角色
-POST {{baseUrl}}/user/giveRole/1
+POST {{baseUrl}}/user/giveRole/6927acb3fef9933cb2462c22
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
-["role-id-1", "role-id-2", "role-id-3"]
+["6926c5bb8f79996afe1104cc"]
 

@@ -9,44 +9,31 @@ GET {{baseUrl}}/permissions/tree
 Authorization: Bearer {{token}}
 Accept: application/json
 
-### 获取权限树 - 按名称筛选
-GET {{baseUrl}}/permissions/tree?search_name=用户管理
-Authorization: Bearer {{token}}
-Accept: application/json
-
-### 获取权限树 - 按类型筛选
-GET {{baseUrl}}/permissions/tree?search_type=menu
-Authorization: Bearer {{token}}
-Accept: application/json
-
 ### 权限分页查询
 GET {{baseUrl}}/permissions/page?page=0&size=10
 Authorization: Bearer {{token}}
 Accept: application/json
 
 ### 权限分页查询 - 按名称搜索
-GET {{baseUrl}}/permissions/page?page=0&size=10&search_name=用户
+GET {{baseUrl}}/permissions/page?page=0&size=10&search_AND_EQ_name=用户
 Authorization: Bearer {{token}}
 Accept: application/json
 
-### 权限分页查询 - 按类型筛选
-GET {{baseUrl}}/permissions/page?page=0&size=10&search_type=button
-Authorization: Bearer {{token}}
-Accept: application/json
 
 ### 根据ID查询权限详情
-GET {{baseUrl}}/permissions/findById/1
+GET {{baseUrl}}/permissions/findById/6926c81d8f79d5db9a7e3103
 Authorization: Bearer {{token}}
 Accept: application/json
 
-### 保存新权限 - 目录
+### 保存权限
 POST {{baseUrl}}/permissions/save
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "name": "系统管理",
-  "val": "/system",
+  "parentId": "6926c81d8f79d5db9a7e3103",
+  "name": "用户管理",
+  "val": "/system/user/**",
   "identification": "system",
   "icon": "el-icon-setting",
   "jumpPath": "/system",
@@ -55,80 +42,16 @@ Content-Type: application/json
   "remark": "系统管理目录"
 }
 
-### 保存新权限 - 菜单
+
+### 更新权限
 POST {{baseUrl}}/permissions/save
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "parentId": "system-catalogue-id",
+  "id": "6927b3e0fef931981b72ff9b",
+  "parentId": "6926c81d8f79d5db9a7e3103",
   "name": "用户管理",
-  "val": "/system/user",
-  "identification": "system:user",
-  "icon": "el-icon-user",
-  "jumpPath": "/system/user",
-  "type": "menu",
-  "orderNum": 1,
-  "remark": "用户管理菜单"
-}
-
-### 保存新权限 - 按钮
-POST {{baseUrl}}/permissions/save
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "parentId": "user-menu-id",
-  "name": "新增用户",
-  "val": "user:add",
-  "identification": "system:user:add",
-  "icon": "el-icon-plus",
-  "type": "button",
-  "orderNum": 1,
-  "remark": "新增用户按钮"
-}
-
-### 保存新权限 - 编辑按钮
-POST {{baseUrl}}/permissions/save
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "parentId": "user-menu-id",
-  "name": "编辑用户",
-  "val": "user:edit",
-  "identification": "system:user:edit",
-  "icon": "el-icon-edit",
-  "type": "button",
-  "orderNum": 2,
-  "remark": "编辑用户按钮"
-}
-
-### 保存新权限 - 删除按钮
-POST {{baseUrl}}/permissions/save
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "parentId": "user-menu-id",
-  "name": "删除用户",
-  "val": "user:delete",
-  "identification": "system:user:delete",
-  "icon": "el-icon-delete",
-  "type": "button",
-  "orderNum": 3,
-  "remark": "删除用户按钮"
-}
-
-### 更新权限信息
-POST {{baseUrl}}/permissions/save
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
-  "id": "1",
-  "parentId": "system-catalogue-id",
-  "name": "用户管理(已更新)",
   "val": "/system/user",
   "identification": "system:user",
   "icon": "el-icon-user-solid",
@@ -143,12 +66,5 @@ DELETE {{baseUrl}}/permissions/delete
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
-["permission-id-1", "permission-id-2"]
-
-### 删除单个权限
-DELETE {{baseUrl}}/permissions/delete
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-["permission-id-1"]
+["6927b3e0fef931981b72ff9b"]
 

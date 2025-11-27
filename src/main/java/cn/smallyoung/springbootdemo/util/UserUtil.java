@@ -34,15 +34,12 @@ import java.util.stream.Collectors;
 @Component
 public class UserUtil {
 
-
     private static JwtConfig jwtConfig;
-
 
     @Autowired
     public void setTemplate(JwtConfig jwtConfig) {
         UserUtil.jwtConfig = jwtConfig;
     }
-
 
     /**
      * 获取当前登录用户id
@@ -51,7 +48,8 @@ public class UserUtil {
      */
     public static String getCurrentAuditor() {
         try {
-            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder
+                    .getRequestAttributes();
             if (servletRequestAttributes != null) {
                 HttpServletRequest request = servletRequestAttributes.getRequest();
                 Object uId = request.getAttribute("userId");
@@ -70,7 +68,8 @@ public class UserUtil {
      */
     public static String getCurrentUserToken() {
         try {
-            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            ServletRequestAttributes servletRequestAttributes = (ServletRequestAttributes) RequestContextHolder
+                    .getRequestAttributes();
             if (servletRequestAttributes != null) {
                 HttpServletRequest request = servletRequestAttributes.getRequest();
                 return request.getHeader(jwtConfig.getTokenHead());
@@ -193,11 +192,14 @@ public class UserUtil {
 
                 if (propertyValue instanceof Collection<?> collection) {
                     // 如果遇到集合，递归处理集合中的每个元素
-                    String remainingIdPath = String.join(".", Arrays.copyOfRange(idPathParts, i + 1, idPathParts.length));
-                    String remainingNamePath = StrUtil.isNotBlank(realNameProperty) ?
-                            getRemainingPath(realNameProperty, i + 1) : null;
-                    String remainingAvatarPath = StrUtil.isNotBlank(avatarProperty) ?
-                            getRemainingPath(avatarProperty, i + 1) : null;
+                    String remainingIdPath = String.join(".",
+                            Arrays.copyOfRange(idPathParts, i + 1, idPathParts.length));
+                    String remainingNamePath = StrUtil.isNotBlank(realNameProperty)
+                            ? getRemainingPath(realNameProperty, i + 1)
+                            : null;
+                    String remainingAvatarPath = StrUtil.isNotBlank(avatarProperty)
+                            ? getRemainingPath(avatarProperty, i + 1)
+                            : null;
 
                     UserProperty remainingProperty = UserProperty.builder()
                             .idProperty(remainingIdPath)
@@ -520,7 +522,7 @@ public class UserUtil {
         }
 
         String idStr = idValue.toString();
-        if (StrUtil.isBlank(idStr) || !StrUtil.isNumeric(idStr)) {
+        if (StrUtil.isBlank(idStr)) {
             return null;
         }
         return idStr;
@@ -547,8 +549,7 @@ public class UserUtil {
                     .collect(Collectors.toMap(
                             User::getId,
                             Function.identity(),
-                            (existing, replacement) -> existing
-                    ));
+                            (existing, replacement) -> existing));
         } catch (Exception e) {
             log.error("批量获取用户信息失败: {}", e.getMessage(), e);
             return Collections.emptyMap();
@@ -568,8 +569,7 @@ public class UserUtil {
                     .idProperty("updatedBy")
                     .realNameProperty("updatedName")
                     .avatarProperty("updatedAvatar")
-                    .build()
-    );
+                    .build());
 
     /**
      * 用户属性配置类

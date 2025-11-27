@@ -8,6 +8,7 @@ import cn.smallyoung.springbootdemo.user.pojo.RoleRequest;
 import cn.smallyoung.springbootdemo.user.pojo.RoleResponse;
 import cn.smallyoung.springbootdemo.user.pojo.mapper.RoleMapper;
 import cn.smallyoung.springbootdemo.user.service.RoleService;
+import cn.smallyoung.springbootdemo.util.UserUtil;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,7 @@ public class RoleController {
         if (CollectionUtils.isEmpty(page.getContent())) {
             return new PageImpl<>(List.of(), pageable, page.getTotalElements());
         }
-        return page.map(RoleMapper.INSTANCE::toResponse);
+        return UserUtil.setUserName(page.map(RoleMapper.INSTANCE::toResponse));
     }
 
     /**
@@ -56,8 +57,13 @@ public class RoleController {
      * @param id 角色id
      */
     @GetMapping("/findById/{id}")
-    public Role findById(@PathVariable String id) {
-        return roleService.findOne(id);
+    public RoleResponse findById(@PathVariable String id) {
+        Role role = roleService.findOne(id);
+        if (role == null) {
+            throw new BizException("根据ID【{}】为查询到对应的角色信息", id);
+        }
+        return UserUtil.setUserName(RoleMapper.INSTANCE.toResponse(role));
+
     }
 
     /**
