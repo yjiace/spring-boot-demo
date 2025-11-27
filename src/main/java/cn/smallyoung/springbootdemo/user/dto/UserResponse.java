@@ -1,4 +1,4 @@
-package cn.smallyoung.springbootdemo.user.pojo;
+package cn.smallyoung.springbootdemo.user.dto;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;

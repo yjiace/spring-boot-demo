@@ -9,7 +9,7 @@ import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.smallyoung.springbootdemo.exception.BizException;
 import cn.smallyoung.springbootdemo.interfaces.ResponseSysResult;
-import cn.smallyoung.springbootdemo.user.pojo.LoginByUsernameRequest;
+import cn.smallyoung.springbootdemo.user.dto.LoginByUsernameRequest;
 import cn.smallyoung.springbootdemo.user.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.ServletOutputStream;

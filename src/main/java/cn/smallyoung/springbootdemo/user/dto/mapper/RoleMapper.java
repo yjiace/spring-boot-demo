@@ -1,9 +1,9 @@
-package cn.smallyoung.springbootdemo.user.pojo.mapper;
+package cn.smallyoung.springbootdemo.user.dto.mapper;
 
 
 import cn.smallyoung.springbootdemo.user.entity.Role;
-import cn.smallyoung.springbootdemo.user.pojo.RoleRequest;
-import cn.smallyoung.springbootdemo.user.pojo.RoleResponse;
+import cn.smallyoung.springbootdemo.user.dto.RoleRequest;
+import cn.smallyoung.springbootdemo.user.dto.RoleResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
