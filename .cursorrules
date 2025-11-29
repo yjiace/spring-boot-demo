@@ -885,6 +885,12 @@ cn.smallyoung.springbootdemo.{模块名}
 ### 步骤 7: 创建 Controller
 参考 `UserController.java`，实现标准 CRUD 接口（`page`、`findById`、`save`、`delete`）。
 
+### 步骤 8: 创建 HTTP 测试文件
+参考 `src/test/resources/user.http`，在 `src/test/resources` 目录下创建 `{模块名}.http`，编写测试用例。
+
+### 步骤 9: 创建接口文档
+在 `docs` 目录下创建 `{模块名}.md`，生成详细的接口说明文档（包含通用查询规则）。
+
 ---
 
 ## 代码质量要求
@@ -952,6 +958,35 @@ public class UserService extends BaseService<User, String> {
 - **异常处理**：使用 `BizException` 抛出业务异常，不要吞掉异常
 - **日志记录**：关键业务节点记录日志
 - **参数校验**：Controller 入参进行必要的校验
+
+---
+
+## 测试与文档规范
+
+### 1. HTTP 接口测试文件
+- **位置**: `src/test/resources/{模块名}.http`
+- **参考**: `src/test/resources/user.http`
+- **规则**:
+  - 每创建一个业务模块，必须同步创建对应的 `.http` 测试文件
+  - 文件内容必须包含该模块的所有 Controller 接口请求示例
+  - 请求路径、请求参数必须与 Controller 代码完全一致
+  - 包含正常情况和异常情况的测试用例
+
+### 2. 接口文档生成
+- **位置**: `docs/{模块名}.md`
+- **规则**:
+  - 每创建一个业务模块，必须同步生成对应的接口文档（方便后续前端使用 AI 编程工具生成代码）
+  - **内容必须包含**:
+    - 接口描述
+    - 请求路径 (Path)
+    - 请求方式 (Method)
+    - 请求参数 (Parameters) - 包含必选/可选说明
+    - 返回参数 (Response) - 包含字段说明
+    - 示例 (Example)
+  - **通用查询说明**:
+    - 文档必须包含“通用查询规则”说明（参考本规则文件中的“通用查询规范”）
+    - 文档必须列出本业务模块支持的特定查询条件（如 `search_AND_EQ_username` 等）
+  - **一致性要求**: 文档内容必须与 Controller 代码严格保持一致，包括请求路径、请求参数、返回参数
 
 ---
 
