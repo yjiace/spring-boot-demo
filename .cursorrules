@@ -805,6 +805,97 @@ IdUtil.objectId();  // BaseService 自动使用
 
 ---
 
+## 鉴权与权限控制规范
+
+### 核心组件（禁止修改）
+
+- **过滤器**: `JwtTokenFilter` - 负责 Token 验证和用户认证
+- **配置类**: `SecurityConfig`、`JwtConfig` - 已配置完成,不要修改
+- **工具类**: `UserUtil` - 提供用户信息获取和数据填充
+
+### JWT 配置规则
+
+**禁止**在代码中硬编码 JWT 配置,必须使用 `application.yaml` 中的 `jwt` 配置:
+- `jwt.enable`: 控制鉴权开关
+- `jwt.sso`: 控制单点登录
+- `jwt.tokenHead`: Token 请求头名称
+- `jwt.anonUrl`: 匿名访问路径白名单
+- `jwt.authUrl`: 需登录但不校验权限的路径
+- `jwt.noAccess`: 禁止访问的路径黑名单
+
+### 鉴权相关开发规则
+
+#### 1. Controller 接口权限控制
+
+**规则**:
+- 需要匿名访问的接口路径,必须添加到 `jwt.anonUrl` 配置中
+- 需要登录但不校验权限的接口,必须添加到 `jwt.authUrl` 配置中
+- 需要权限控制的接口,依赖 Redis 中的 `authorities` 字段自动校验
+- **禁止**在 Controller 中手动校验 Token 或权限
+
+#### 2. 获取当前用户信息
+
+**必须**使用 `UserUtil` 工具类获取当前登录用户信息:
+
+```java
+// 获取当前用户 ID
+String userId = UserUtil.getCurrentAuditor();
+
+// 获取当前 Token
+String token = UserUtil.getCurrentUserToken();
+```
+
+**禁止**:
+- 从 `SecurityContextHolder` 直接获取
+- 从 `HttpServletRequest` 手动解析 Token
+- 在 Service 层传递 userId 参数(应使用 `UserUtil.getCurrentAuditor()`)
+
+#### 3. JPA 审计字段自动填充
+
+**规则**:
+- Entity 必须继承 `BaseEntity`,自动包含审计字段(`createdBy`、`createdTime`、`updatedBy`、`updatedTime`)
+- **禁止**手动设置审计字段,JPA 会通过 `SpringSecurityAuditorAware` 自动填充
+- `createdBy` 和 `updatedBy` 自动填充当前登录用户 ID(通过 `UserUtil.getCurrentAuditor()`)
+
+#### 4. 用户姓名填充规则
+
+**调用时机**: 当返回的数据需要显示创建人姓名(`createdName`)、修改人姓名(`updatedName`)或其他用户姓名字段时,调用 `UserUtil.setUserName()` 进行填充
+
+**调用位置**: 可以在任何位置调用(Controller、Service、工具类等),通常在数据返回前调用
+
+**标准用法**:
+```java
+// 分页查询
+@GetMapping("/page")
+public Page<UserResponse> page(Pageable pageable, HttpServletRequest request) {
+    Page<User> page = userService.findAll(WebUtils.getParametersStartingWith(request, "search_"), pageable);
+    return UserUtil.setUserName(page.map(UserMapper.INSTANCE::toResponse));
+}
+
+// 详情查询
+@GetMapping("/findById/{id}")
+public UserResponse findById(@PathVariable String id) {
+    User user = userService.findOne(id);
+    return UserUtil.setUserName(UserMapper.INSTANCE.toResponse(user));
+}
+
+// 自定义字段映射
+List<UserUtil.UserProperty> properties = List.of(
+    UserUtil.UserProperty.builder()
+        .idProperty("managerId")
+        .realNameProperty("managerName")
+        .build()
+);
+UserUtil.setUserName(list, properties);
+```
+
+**Response DTO 要求**:
+- 如果需要显示用户姓名,必须包含对应的姓名字段(如 `createdName`、`updatedName`)
+- 姓名字段类型必须为 `String`
+- 如果有自定义用户 ID 字段,必须同时定义对应的姓名字段(如 `managerId` 对应 `managerName`)
+
+---
+
 ## 数据库规范
 
 ### 表命名
