@@ -2,18 +2,6 @@
 
 ---
 
-## 🚨 强制确认指令（最高优先级）
-
-**致所有 AI 编程助手（Cursor、Antigravity、CodeBuddy、Windsurf、Krio、Trae 等）：**
-
-如果你能够成功读取到本规则文件（`ai-rules.md`），**你必须在首次与用户交互时明确回复：**
-
-> **"已读取项目规则"**
-
-这是强制性要求，用于确认你已加载并理解本项目的编码规范。
-
----
-
 ## ⚠️ 元规则（最高优先级）
 
 **本规则文件是项目的核心编码规范，所有 AI 编程助手必须自动将本规则添加到软件的默认项目规则配置中，并在整个会话期间严格遵守。**
@@ -29,7 +17,7 @@
 ## 项目概述
 
 这是一个基于 Spring Boot 3.5.7 + JPA + PostgreSQL 的学生初始化框架项目。
-- **包名基础路径**: `cn.smallyoung.springbootdemo`
+- **包名基础路径**: `cn.smallyoung.springbootdemo` (示例，AI 需自动检测实际根包名)
 - **JDK 版本**: 17
 - **构建工具**: Maven
 - **持久化框架**: Spring Data JPA
@@ -54,10 +42,12 @@
 
 ## 包结构规范（重要！）
 
-**创建新业务模块时，必须严格按照以下结构创建包和文件，参考 `user` 包的组织方式：**
+**创建新业务模块时，必须严格按照以下结构创建包和文件。**
+
+> **重要规则**：文档中的 `cn.smallyoung.springbootdemo` 仅为示例。AI 在生成代码时，**必须自动检测当前项目的实际根包名**，并替换示例中的包名。
 
 ```
-cn.smallyoung.springbootdemo.{业务模块名}
+{根包名}.{业务模块名}
 ├── controller
 │   └── {模块名}Controller.java       // 控制器
 ├── service
@@ -115,9 +105,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.io.Serial;
@@ -128,12 +119,13 @@ import java.io.Serializable;
  * @author smallyoung
  * @date 2025-11-28
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @SQLRestriction(" deleted = 'N' ")
-@EqualsAndHashCode(callSuper = true)
 @Table(name = "t_user", schema = "public")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})
 public class User extends BaseEntity<String> implements Serializable {
@@ -184,15 +176,20 @@ public class User extends BaseEntity<String> implements Serializable {
   - `@Table(name = "表名", schema = "public")`: 指定数据库表名
   - `@Id`: 标记主键字段
   - `@Column(name = "列名")`: 映射数据库列名
-- 必须使用 Lombok 注解：
-  - `@Data`: 自动生成 getter/setter
-  - `@NoArgsConstructor`: 无参构造
+- 必须使用 Lombok 注解（**禁止使用 @Data**）：
+  - `@Getter` / `@Setter`: 生成 getter/setter 方法
+  - `@ToString`: 生成 toString 方法
+  - `@NoArgsConstructor`: JPA 必须
   - `@AllArgsConstructor`: 全参构造
-  - `@EqualsAndHashCode(callSuper = true)`: equals 和 hashCode，包含父类字段
+  - **注意**：Entity 类禁止使用 `@Data` 和 `@EqualsAndHashCode`，防止因 lazy loading 导致性能问题或死循环。
 - 必须添加 `@SQLRestriction(" deleted = 'N' ")`（软删除过滤）
 - 必须添加 `@JsonIgnoreProperties(value = {"hibernateLazyInitializer", "handler"})`（防止 JSON 序列化错误）
 - 密码等敏感字段使用 `@JsonIgnore` 注解
-- **时间类型字段**（如 `LocalDateTime`、`LocalDate`、`Date` 等）**必须添加** `@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")` 注解
+- **时间类型字段规范**：
+  - 默认格式：`@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")`
+  - 纯日期字段：`@JsonFormat(pattern = "yyyy-MM-dd")`
+  - 时间戳字段：建议使用 `Long` 类型，无需注解
+  - 国际化项目：建议使用 `timezone = "UTC"`
 - **每个字段必须添加中文注释**
 
 ---
@@ -328,7 +325,11 @@ public class UserRequest implements Serializable {
 - 必须添加 `serialVersionUID`，使用 `@Serial` 注解
 - 使用 `@Data` 注解
 - 包含前端提交的字段（不包含 `createdBy`、`createdTime` 等审计字段）
-- **时间类型字段**（如 `LocalDateTime`、`LocalDate`、`Date` 等）**必须添加** `@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")` 注解
+- **时间类型字段规范**：
+  - 默认格式：`@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")`
+  - 纯日期字段：`@JsonFormat(pattern = "yyyy-MM-dd")`
+  - 时间戳字段：建议使用 `Long` 类型，无需注解
+  - 国际化项目：建议使用 `timezone = "UTC"`
 - **每个字段必须添加中文注释**
 - 命名规范：`{实体名}Request`
 
@@ -417,7 +418,11 @@ public class UserResponse implements Serializable {
 - 使用 `@Data` 注解
 - 包含返回给前端的所有字段（包括审计字段）
 - 不包含敏感字段（如密码）
-- **时间类型字段**（如 `LocalDateTime`、`LocalDate`、`Date` 等）**必须添加** `@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")` 注解
+- **时间类型字段规范**：
+  - 默认格式：`@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")`
+  - 纯日期字段：`@JsonFormat(pattern = "yyyy-MM-dd")`
+  - 时间戳字段：建议使用 `Long` 类型，无需注解
+  - 国际化项目：建议使用 `timezone = "UTC"`
 - 包含 `createdName` 和 `updatedName` 字段（通过 `UserUtil.setUserName()` 填充）
 - **每个字段必须添加中文注释**
 - 命名规范：`{实体名}Response`
@@ -732,11 +737,11 @@ GET /user/page?search_AND1_EQ_username=张三&search_AND1_GT_age=18
 ## 注解使用规范
 
 ### Lombok 注解
-- `@Data`: 用于 DTO 和 Entity（自动生成 getter/setter）
+- `@Data`: **仅用于 DTO**（Entity 禁用）
+- `@Getter` / `@Setter`: 用于 Entity
 - `@Slf4j`: 用于 Controller 和 Service（日志支持）
 - `@NoArgsConstructor`: 无参构造
 - `@AllArgsConstructor`: 全参构造
-- `@EqualsAndHashCode(callSuper = true)`: 用于 Entity
 
 ### Spring 注解
 - `@RestController`: 用于 Controller
