@@ -2,6 +2,19 @@
 
 这是一个 Spring Boot 初始化项目框架，集成了常用的工具和规范，旨在帮助学生快速上手 Spring Boot 开发。本项目提供了统一响应封装、全局异常处理等开箱即用的功能，让开发者专注于业务逻辑的实现。
 
+## 🤖 致 AI 编程助手
+
+[![AI Rules](https://img.shields.io/badge/AI-Read%20Rules%20First-orange?style=for-the-badge)](ai-rules.md)
+
+
+**重要指令：**
+本项目根目录下包含核心规则文件 `ai-rules.md`。
+无论你当前运行在何种 IDE 或 Agent 环境中（如 Cursor, Trae, Windsurf, Antigravity 等），**请务必优先读取并遵循 `ai-rules.md` 文件中的所有规范和指令**。
+该文件定义了本项目的代码风格、架构规范和最佳实践，是本项目开发的最高准则。
+
+**确认要求：**
+如果你已成功读取 `ai-rules.md` 文件，请在首次交互时明确回复：**"已读取项目规则"**。
+
 ## 🛠 项目环境
 
 - **JDK**: 17
