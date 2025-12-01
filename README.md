@@ -22,6 +22,44 @@
 - **构建工具**: Maven
 - **包名**: `cn.smallyoung.springbootdemo`
 
+## 🌿 分支管理
+
+本项目采用分支管理策略，不同分支提供不同级别的功能支持。**请根据您的项目需求选择合适的分支进行开发。**
+
+| 分支名称 | 功能特性 | 适用场景 | 基于分支 |
+|---------|---------|---------|----------|
+| `main` | 基础框架 + 通用工具方法 | 学习 Spring Boot 基础、快速搭建简单应用 | - |
+| `main-postgresql` | `main` + PostgreSQL 数据库 + 通用查询逻辑 | 需要数据库持久化的应用开发 | `main` |
+| `main-security` | `main-postgresql` + JWT 鉴权 + 权限管理 | 需要用户认证和权限控制的企业级应用 | `main-postgresql` |
+
+### 分支切换
+
+```bash
+# 切换到 PostgreSQL 数据库分支
+git checkout main-postgresql
+
+# 切换到权限管理分支
+git checkout main-security
+
+# 返回主分支
+git checkout main
+```
+
+### 功能对比
+
+| 功能模块 | main | main-postgresql | main-security |
+|---------|:----:|:---------------:|:-------------:|
+| 统一响应封装 | ✅ | ✅ | ✅ |
+| 全局异常处理 | ✅ | ✅ | ✅ |
+| 异步日志配置 | ✅ | ✅ | ✅ |
+| PostgreSQL 集成 | ❌ | ✅ | ✅ |
+| JPA 通用查询 | ❌ | ✅ | ✅ |
+| JPA 审计功能 | ❌ | ✅ | ✅ |
+| JWT 认证 | ❌ | ❌ | ✅ |
+| 权限管理 | ❌ | ❌ | ✅ |
+| 单点登录 (SSO) | ❌ | ❌ | ✅ |
+
+
 ## 📦 主要依赖
 
 项目已经集成了以下常用依赖，无需重复添加:
