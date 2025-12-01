@@ -2,6 +2,7 @@ package cn.smallyoung.springbootdemo;
 
 
 import cn.hutool.core.lang.Dict;
+import cn.hutool.core.util.IdUtil;
 import cn.smallyoung.springbootdemo.user.entity.User;
 import cn.smallyoung.springbootdemo.user.service.UserService;
 import jakarta.annotation.Resource;
@@ -55,12 +56,13 @@ public class UserTest {
     @Test
     public void save() {
         User user =  new User();
-        user.setUsername("test");
+        user.setId(IdUtil.objectId());
+        user.setUsername("admin");
         user.setPassword(bCryptPasswordEncoder.encode("123456"));
         user.setStatus("Y");
-        user.setCreatedBy("-1");
+        user.setCreatedBy(user.getId());
         user.setCreatedTime(LocalDateTime.now());
-        user.setUpdatedBy("-1");
+        user.setUpdatedBy(user.getId());
         user.setUpdatedTime(LocalDateTime.now());
         user.setDeleted("N");
         userService.save(user);

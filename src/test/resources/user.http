@@ -18,7 +18,7 @@ Content-Type: application/json
 {
   "username": "admin",
   "password": "123456",
-  "code": "3792",
+  "code": "4356",
   "codeId": "{{captchaId}}",
   "remember": true
 }
@@ -82,7 +82,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "username": "test001",
+  "username": "admin",
   "password": "123456",
   "avatarUrl": null,
   "mobile": "123123123123",
