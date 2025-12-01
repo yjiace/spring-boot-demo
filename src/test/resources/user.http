@@ -82,9 +82,10 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "username": "test",
+  "username": "test001",
   "password": "123456",
   "avatarUrl": null,
+  "mobile": "123123123123",
   "status": "Y"
 }
 

@@ -30,6 +30,16 @@ public class UserResponse implements Serializable {
     private String username;
 
     /**
+     * 手机号
+     */
+    private String mobile;
+
+    /**
+     * 微信openid
+     */
+    private String openid;
+
+    /**
      * 头像
      */
     private String avatarUrl;
