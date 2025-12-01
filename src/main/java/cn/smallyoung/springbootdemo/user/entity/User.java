@@ -57,6 +57,16 @@ public class User extends BaseEntity<String> implements Serializable {
     private String password;
 
     /**
+     * 手机号
+     */
+    private String mobile;
+
+    /**
+     * 微信openid
+     */
+    private String openid;
+
+    /**
      * 头像
      */
     @Column(name = "avatar_url")

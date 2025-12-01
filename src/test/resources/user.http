@@ -17,14 +17,15 @@ POST {{baseUrl}}/user/save
 Content-Type: application/json
 
 {
-  "username": "test001",
+  "username": "test",
   "password": "123456",
   "avatarUrl": null,
+  "mobile": "123123123123",
   "status": "Y",
-  "created_by": "6926a1958f79b1d48e11a6f2",
-  "created_time": "2025-01-01 00:00:00",
-  "updated_by": "6926a1958f79b1d48e11a6f2",
-  "updated_time": "2025-01-01 00:00:00"
+  "createdBy": "6926a1958f79b1d48e11a6f2",
+  "createdTime": "2025-01-01 00:00:00",
+  "updatedBy": "6926a1958f79b1d48e11a6f2",
+  "updatedTime": "2025-01-01 00:00:00"
 }
 
 ### 更新用户信息
