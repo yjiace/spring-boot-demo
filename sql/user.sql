@@ -108,3 +108,9 @@ CREATE TABLE t_user_role(
 COMMENT ON TABLE "public"."t_user_role" IS '用户角色表';
 COMMENT ON COLUMN "public"."t_user_role"."role_id" IS '角色id';
 COMMENT ON COLUMN "public"."t_user_role"."user_id" IS '用户id';
+
+INSERT INTO "public"."t_user" ("id", "username", "password", "mobile", "openid", "avatar_url", "status", "created_by", "created_time", "updated_by", "updated_time", "deleted") VALUES ('692d4ab7fef965435984ad47', 'admin', '$2a$10$ddosHgvslK2KinNlNEXz8Og0n7LKz6Un0hxSs8rjWPP2n3QqwjYwG', NULL, NULL, NULL, 'Y', '692d4ab7fef965435984ad47', '2025-12-01 07:58:48.528595+00', '692d4ab7fef965435984ad47', '2025-12-01 07:58:48.528595+00', 'N');
+INSERT INTO "public"."t_role" ("id", "name", "created_by", "created_time", "updated_by", "updated_time", "deleted") VALUES ('6926c5bb8f79996afe1104cc', '超级管理员', '6926a1958f79b1d48e11a6f2', '2025-11-26 09:17:48.849666+00', '6926a1958f79b1d48e11a6f2', '2025-11-27 02:11:27.260294+00', 'N');
+INSERT INTO "public"."t_permission" ("id", "parent_id", "name", "val", "identification", "icon", "jump_path", "type", "order_num", "remark", "created_by", "created_time", "updated_by", "updated_time", "deleted") VALUES ('6926c81d8f79d5db9a7e3103', '0', '全部权限', '/**', NULL, NULL, NULL, 'catalogue', 0, NULL, '6926a1958f79b1d48e11a6f2', '2025-11-26 09:27:57.939619+00', '6926a1958f79b1d48e11a6f2', '2025-11-26 09:27:57.939619+00', 'N');
+INSERT INTO "public"."t_user_role" ("role_id", "user_id") VALUES ('6926c5bb8f79996afe1104cc', '692d4ab7fef965435984ad47');
+INSERT INTO "public"."t_role_permission" ("role_id", "permission_id") VALUES ('6926c5bb8f79996afe1104cc', '6926c81d8f79d5db9a7e3103');
