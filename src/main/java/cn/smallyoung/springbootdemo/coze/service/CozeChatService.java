@@ -13,7 +13,6 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -33,7 +32,7 @@ public class CozeChatService {
     }
 
     /**
-     * 调用此接口发起一次对话，支持添加上下文。
+     * 发起对话
      *
      * @param token           鉴权Token
      * @param conversationId  会话ID
@@ -55,7 +54,7 @@ public class CozeChatService {
     }
 
     /**
-     * 调用此接口发起一次对话，支持添加上下文和流式响应。
+     * 发起对话 流式响应。
      *
      * @param token           鉴权Token
      * @param conversationId  会话ID
@@ -93,6 +92,7 @@ public class CozeChatService {
     }
 
     /**
+     * 查看对话详情
      *
      * @param token          鉴权Token
      * @param conversationId 会话ID
@@ -100,7 +100,11 @@ public class CozeChatService {
      */
     public Mono<RetrieveResponse> retrieve(String token, String conversationId, String chatId) {
         return webClient.get()
-                .uri("/v3/chat/retrieve", Map.of("conversation_id", conversationId, "chat_id", chatId))
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v3/chat/retrieve")
+                        .queryParam("conversation_id", conversationId)
+                        .queryParam("chat_id", chatId)
+                        .build())
                 .header(CozeConstant.AUTHORIZATION, "Bearer " + token)
                 .retrieve()
                 .bodyToMono(RetrieveResponse.class)

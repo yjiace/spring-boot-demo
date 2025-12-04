@@ -31,7 +31,7 @@ public class CozeChatResponse implements Serializable {
      * 状态信息。API 调用失败时可通过此字段查看详细错误信息。
      * 状态码为 0 时，msg 默认为空。
      */
-    private String message;
+    private String msg;
 
     private Data data;
 
