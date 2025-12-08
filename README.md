@@ -95,8 +95,15 @@ cn.smallyoung.springbootdemo
 │       └── SpecificationOperator.java
 ├── component/
 │   └── ResponseSysResultAdvice.java   // 全局统一响应处理和异常拦截
+├── config/                          # 配置类
+│   ├── JwtConfig.java               # JWT配置
+│   ├── RedisConfig.java             # Redis配置
+│   ├── SecurityConfig.java          # 安全配置
+│   └── SpringSecurityAuditorAware.java  # 审计用户获取
 ├── exception/
 │   └── BizException.java              // 自定义业务异常
+├── filter/                          # 过滤器
+│   └── JwtTokenFilter.java          # JWT认证过滤器
 ├── interfaces/
 │   └── ResponseSysResult.java         // 统一响应注解
 ├── user/                              // 用户模块（示例业务模块）
