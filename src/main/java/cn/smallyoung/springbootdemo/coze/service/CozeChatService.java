@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.util.Optional;
 
 /**
+ * 对话相关接口
  *
  * @author smallyoung
  */
@@ -34,19 +35,19 @@ public class CozeChatService {
     /**
      * 发起对话
      *
-     * @param token           鉴权Token
-     * @param conversationId  会话ID
-     * @param cozeChatRequest 请求参数
+     * @param token          鉴权Token
+     * @param conversationId 会话ID
+     * @param request        请求参数
      */
-    public Mono<CozeChatResponse> chat(String token, String conversationId, CozeChatRequest cozeChatRequest) {
-        cozeChatRequest.setStream(Boolean.FALSE);
-        log.info("发送 Coze Chat 请求: {}", JSONObject.toJSONString(cozeChatRequest));
+    public Mono<CozeChatResponse> chat(String token, String conversationId, CozeChatRequest request) {
+        request.setStream(Boolean.FALSE);
+        log.info("发送 Coze Chat 请求: {}", JSONObject.toJSONString(request));
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder.path("/v3/chat")
                         .queryParamIfPresent("conversation_id", Optional.ofNullable(conversationId))
                         .build())
                 .header(CozeConstant.AUTHORIZATION, "Bearer " + token)
-                .bodyValue(JSONObject.from(cozeChatRequest))
+                .bodyValue(JSONObject.from(request))
                 .retrieve()
                 .bodyToMono(CozeChatResponse.class)
                 .doOnSuccess(response -> log.info("Coze Chat 响应成功"))
@@ -56,19 +57,19 @@ public class CozeChatService {
     /**
      * 发起对话 流式响应。
      *
-     * @param token           鉴权Token
-     * @param conversationId  会话ID
-     * @param cozeChatRequest 请求参数
+     * @param token          鉴权Token
+     * @param conversationId 会话ID
+     * @param request        请求参数
      */
-    public Flux<CozeChatStreamResponse> chatStream(String token, String conversationId, CozeChatRequest cozeChatRequest) {
-        cozeChatRequest.setStream(Boolean.TRUE);
-        log.info("发送 Coze Chat Stream 请求: {}", JSONObject.toJSONString(cozeChatRequest));
+    public Flux<CozeChatStreamResponse> chatStream(String token, String conversationId, CozeChatRequest request) {
+        request.setStream(Boolean.TRUE);
+        log.info("发送 Coze Chat Stream 请求: {}", JSONObject.toJSONString(request));
         return webClient.post()
                 .uri(uriBuilder -> uriBuilder.path("/v3/chat")
                         .queryParamIfPresent("conversation_id", Optional.ofNullable(conversationId))
                         .build())
                 .header(CozeConstant.AUTHORIZATION, "Bearer " + token)
-                .bodyValue(JSONObject.from(cozeChatRequest))
+                .bodyValue(JSONObject.from(request))
                 .retrieve()
                 .bodyToFlux(String.class)
                 .mapNotNull(line -> {
