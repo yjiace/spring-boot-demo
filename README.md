@@ -70,30 +70,52 @@ git checkout main
 | 依赖 | 版本 | 说明 |
 |------|------|------|
 | `spring-boot-starter-web` | 3.5.7 | 提供 Web 开发支持 |
+| `spring-boot-starter-data-jpa` | 3.5.7 | JPA 数据访问支持 |
+| `postgresql` | - | PostgreSQL 数据库驱动 |
 | `lombok` | - | 简化 Java 代码，减少样板代码 |
 | `hutool-all` | 5.8.41 | 强大的 Java 工具包 |
 | `fastjson2` | 2.0.52 | 高性能 JSON 处理库 |
 | `mapstruct` | 1.6.2 | Java Bean 映射工具 |
 | `spring-boot-starter-log4j2` | 3.5.7 | 日志框架（已排除默认的 Logback） |
+| `log4jdbc` | 1.2 | SQL 日志打印工具 |
 
 ## 📂 项目结构
 
 ```
 cn.smallyoung.springbootdemo
-├── component
-│   └── ResponseSysResultAdvice.java  // 全局统一响应处理和异常拦截
-├── exception
-│   └── BizException.java             // 自定义业务异常
-├── interfaces
-│   └── ResponseSysResult.java        // 统一响应注解（用于控制是否启用统一响应封装）
-├── util
-│   └── SysResult.java                // 统一响应结果实体类
-└── SpringBootDemoApplication.java    // 启动类
+├── base/                              // 基础模块
+│   ├── BaseEntity.java                // 基础实体类（包含 id、创建时间、更新时间等）
+│   ├── BaseRepository.java            // 基础 Repository 接口
+│   ├── BaseService.java               // 基础 Service 类（包含通用 CRUD 和分页查询）
+│   ├── funcion/
+│   │   └── Function3Parameter.java    // 三参数函数式接口
+│   └── specification/                 // JPA 动态查询规范
+│       ├── SimpleSpecification.java
+│       ├── SimpleSpecificationBuilder.java
+│       └── SpecificationOperator.java
+├── component/
+│   └── ResponseSysResultAdvice.java   // 全局统一响应处理和异常拦截
+├── exception/
+│   └── BizException.java              // 自定义业务异常
+├── interfaces/
+│   └── ResponseSysResult.java         // 统一响应注解
+├── user/                              // 用户模块（示例业务模块）
+│   ├── controller/                    // 控制器层
+│   ├── dao/                           // 数据访问层
+│   ├── dto/                           // 数据传输对象
+│   ├── entity/                        // 实体类
+│   └── service/                       // 服务层
+├── util/
+│   ├── SpringBeanUtils.java           // Spring Bean 工具类
+│   ├── SysResult.java                 // 统一响应结果实体类
+│   └── UserUtil.java                  // 用户工具类
+└── SpringBootDemoApplication.java     // 启动类
 ```
 
 **配置文件：**
 - `application.yaml` - 主配置文件
 - `log4j2.xml` - Log4j2 日志配置文件
+- `sql/` - 数据库初始化脚本目录
 
 ## ✨ 核心特性
 
