@@ -18,7 +18,10 @@ import java.util.stream.Collectors;
 /**
  * @author smallyoung
  */
-@Data
+
+@Getter
+@Setter
+@ToString
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
