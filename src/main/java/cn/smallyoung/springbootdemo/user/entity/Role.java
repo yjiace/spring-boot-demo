@@ -17,7 +17,9 @@ import java.util.List;
  *
  * @author : smallyoung
  */
-@Data
+@Getter
+@Setter
+@ToString
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
